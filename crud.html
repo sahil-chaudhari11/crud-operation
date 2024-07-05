@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CRUD Operations</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+            padding: 8px;
+        }
+        th, td {
+            text-align: left;
+        }
+        #formContainer {
+            margin-bottom: 10px;
+        }
+        input {
+            margin: 5px;
+            padding: 8px;
+            width: calc(100% - 24px);
+            box-sizing: border-box;
+        }
+        button {
+            margin: 5px;
+            padding: 8px 16px;
+        }
+        table {
+            width: 100%;
+            margin-top: 20px;
+        }
+        @media screen and (max-width: 600px) {
+            table, thead, tbody, th, td, tr {
+                display: block;
+            }
+            thead tr {
+                display: none;
+            }
+            tr {
+                margin-bottom: 10px;
+            }
+            td {
+                text-align: right;
+                padding-left: 50%;
+                position: relative;
+            }
+            td:before {
+                content: attr(data-label);
+                position: absolute;
+                left: 0;
+                width: 50%;
+                padding-left: 10px;
+                font-weight: bold;
+                text-align: left;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div id="formContainer">
+    <h3>Add Employee</h3>
+    <input type="text" id="fullName" placeholder="Full Name">
+    <input type="text" id="empCode" placeholder="Emp Code">
+    <input type="number" id="salary" placeholder="Salary">
+    <input type="text" id="city" placeholder="City">
+    <button onclick="createItem()">Add</button>
+</div>
+
+<table id="itemTable">
+    <thead>
+        <tr>
+            <th>Full Name</th>
+            <th>Emp Code</th>
+            <th>Salary</th>
+            <th>City</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+
+<script>
+// Employee list
+let employeeList = [];
+
+// Create employee
+function createItem() {
+    const fullName = document.getElementById('fullName').value;
+    const empCode = document.getElementById('empCode').value;
+    const salary = document.getElementById('salary').value;
+    const city = document.getElementById('city').value;
+
+    if (fullName && empCode && salary && city) {
+        const employee = {
+            fullName,
+            empCode,
+            salary,
+            city
+        };
+        employeeList.push(employee);
+        document.getElementById('fullName').value = '';
+        document.getElementById('empCode').value = '';
+        document.getElementById('salary').value = '';
+        document.getElementById('city').value = '';
+        renderTable();
+    }
+}
+
+// Read and render table
+function renderTable() {
+    const tableBody = document.querySelector('#itemTable tbody');
+    // Clear the table body
+    tableBody.innerHTML = '';
+    employeeList.forEach((employee, index) => {
+        const row = tableBody.insertRow();
+        const cell1 = row.insertCell(0);
+        const cell2 = row.insertCell(1);
+        const cell3 = row.insertCell(2);
+        const cell4 = row.insertCell(3);
+        const cell5 = row.insertCell(4);
+        cell1.setAttribute('data-label', 'Full Name');
+        cell2.setAttribute('data-label', 'Emp Code');
+        cell3.setAttribute('data-label', 'Salary');
+        cell4.setAttribute('data-label', 'City');
+        cell5.setAttribute('data-label', 'Actions');
+        cell1.innerHTML = employee.fullName;
+        cell2.innerHTML = employee.empCode;
+        cell3.innerHTML = employee.salary;
+        cell4.innerHTML = employee.city;
+        cell5.innerHTML = `<button onclick="editItem(${index})">Edit</button>
+                           <button onclick="deleteItem(${index})">Delete</button>`;
+    });
+}
+
+// Update employee
+function editItem(index) {
+    const employee = employeeList[index];
+    const newFullName = prompt("Enter new full name:", employee.fullName);
+    const newEmpCode = prompt("Enter new emp code:", employee.empCode);
+    const newSalary = prompt("Enter new salary:", employee.salary);
+    const newCity = prompt("Enter new city:", employee.city);
+
+    if (newFullName && newEmpCode && newSalary && newCity) {
+        employeeList[index] = {
+            fullName: newFullName,
+            empCode: newEmpCode,
+            salary: newSalary,
+            city: newCity
+        };
+        renderTable();
+    }
+}
+
+// Delete employee
+function deleteItem(index) {
+    employeeList.splice(index, 1);
+    renderTable();
+}
+
+// Initial render
+renderTable();
+</script>
+
+</body>
+</html>
